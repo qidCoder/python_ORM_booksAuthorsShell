@@ -1,0 +1,90 @@
+#Created by Shelley Ophir
+#Coding Dojo Oct. 11, 2020
+#Create a new project called books_authors_proj and an app called books_authors_app. Use the following diagram as a guide for designing your models:
+
+Query: Create 5 books with the following names: C Sharp, Java, Python, PHP, Ruby
+>>> Book.objects.create(title= "C Sharp")
+ID: 1 Title: C Sharp
+>>> Book.objects.create(title= "Java")
+ID: 2 Title: Java
+>>> Book.objects.create(title= "Python")
+ID: 3 Title: Python
+>>> Book.objects.create(title= "PHP")
+ID: 4 Title: PHP
+>>> Book.objects.create(title= "Ruby")
+ID: 5 Title: Ruby
+
+Query: Create 5 different authors: Jane Austen, Emily Dickinson, Fyodor Dostoevsky, William Shakespeare, Lau Tzu
+>>> Author.objects.create(first_name = "Jane", last_name = "Austen")
+ID: 1 Last Name: Austen
+>>> Author.objects.create(first_name = "Emily", last_name = "Dickinson")
+ID: 2 Last Name: Dickinson
+>>> Author.objects.create(first_name = "Fyodor", last_name = "Dostoevsky")
+ID: 3 Last Name: Dostoevsky
+>>> Author.objects.create(first_name = "William", last_name = "Shakespeare")
+ID: 4 Last Name: Shakespeare
+>>> Author.objects.create(first_name = "Lau", last_name = "Tzu")
+ID: 5 Last Name: Tzu
+
+Query: Change the name of the C Sharp book to C#
+>>> from books_authors_app.models import Book, Author
+>>> change_name = Book.objects.get(title = "C Sharp")
+>>> change_name.title = "C#"
+>>> change_name.save
+<bound method Model.save of ID: 1 Title: C#>
+
+Query: Change the first name of the 4th author to Bill
+>>> Author.objects.get(id=4).__dict__
+{'_state': <django.db.models.base.ModelState object at 0x00000271584F6E20>, 'id': 4, 'first_name': 'William', 'last_name': 'Shakespeare', 'notes': '', 'created_at': datetime.datetime(2020, 10, 12, 11, 29, 29, 919276, tzinfo=<UTC>), 'updated_at': datetime.datetime(2020, 10, 12, 11, 29, 29, 919276, tzinfo=<UTC>)}
+>>> change_name = Author.objects.get(id=4)
+>>> change_name.first_name = "Bill"
+>>> change_name.save()
+>>> Author.objects.get(id=4).__dict__
+{'_state': <django.db.models.base.ModelState object at 0x00000271584F6970>, 'id': 4, 'first_name': 'Bill', 'last_name': 'Shakespeare', 'notes': '', 'created_at': datetime.datetime(2020, 10, 12, 11, 29, 29, 919276, tzinfo=<UTC>), 'updated_at': datetime.datetime(2020, 10, 12, 11, 33, 32, 887243, tzinfo=<UTC>)}
+>>>
+
+Query: Assign the first author to the first 2 books
+>>> Book.objects.get(id=1).authors.add(Author.objects.get(id=1))
+>>> Book.objects.get(id=2).authors.add(Author.objects.get(id=1))
+
+Query: Assign the second author to the first 3 books
+>>> Book.objects.get(id=1).authors.add(Author.objects.get(id=2))
+>>> Book.objects.get(id=2).authors.add(Author.objects.get(id=2))
+>>> Book.objects.get(id=3).authors.add(Author.objects.get(id=2))
+
+Query: Assign the third author to the first 4 books
+>>> Book.objects.get(id=1).authors.add(Author.objects.get(id=3))
+>>> Book.objects.get(id=2).authors.add(Author.objects.get(id=3))
+>>> Book.objects.get(id=3).authors.add(Author.objects.get(id=3))
+>>> Book.objects.get(id=4).authors.add(Author.objects.get(id=3))
+
+Query: Assign the fourth author to the first 5 books (or in other words, all the books)
+>>> Book.objects.get(id=1).authors.add(Author.objects.get(id=4))
+>>> Book.objects.get(id=2).authors.add(Author.objects.get(id=4))
+>>> Book.objects.get(id=3).authors.add(Author.objects.get(id=4))
+>>> Book.objects.get(id=4).authors.add(Author.objects.get(id=4))
+>>> Book.objects.get(id=5).authors.add(Author.objects.get(id=4))
+
+Query: Retrieve all the authors for the 3rd book
+>>> Book.objects.get(id=3).authors.all()
+<QuerySet [ID: 2 Last Name: Dickinson, ID: 3 Last Name: Dostoevsky, ID: 4 Last Name: Shakespeare]>
+
+Query: Remove the first author of the 3rd book
+>>> Book.objects.get(id=3).authors.remove(Author.objects.get(id=2))
+>>> Book.objects.get(id=3).authors.all()
+<QuerySet [ID: 3 Last Name: Dostoevsky, ID: 4 Last Name: Shakespeare]>
+
+Query: Add the 5th author as one of the authors of the 2nd book
+>>> Book.objects.get(id=2).authors.all()
+<QuerySet [ID: 1 Last Name: Austen, ID: 2 Last Name: Dickinson, ID: 3 Last Name: Dostoevsky, ID: 4 Last Name: Shakespeare]>
+>>> Book.objects.get(id=2).authors.add(Author.objects.get(id=5))
+>>> Book.objects.get(id=2).authors.all()
+<QuerySet [ID: 1 Last Name: Austen, ID: 2 Last Name: Dickinson, ID: 3 Last Name: Dostoevsky, ID: 4 Last Name: Shakespeare, ID: 5 Last Name: Tzu]>
+
+Query: Find all the books that the 3rd author is part of
+>>> Author.objects.get(id=3).books.all()
+<QuerySet [ID: 1 Title: C#, ID: 2 Title: Java, ID: 3 Title: Python, ID: 4 Title: PHP]>
+
+Query: Find all the authors that contributed to the 5th book
+>>> Book.objects.get(id=5).authors.all()
+<QuerySet [ID: 4 Last Name: Shakespeare]>
